@@ -1,0 +1,32 @@
+name: CVE Monitor
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"   # 9am UTC, weekdays
+  workflow_dispatch:
+
+jobs:
+  stackwatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore CVE state
+        uses: actions/cache@v4
+        with:
+          path: state.json
+          key: stackwatch-state-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: stackwatch-state-${{ runner.os }}-
+
+      - name: Run StackWatch
+        uses: yourorg/stackwatch@v1
+        with:
+          config: examples/stack.yml
+          slack-webhook-url: ${{ secrets.STACKWATCH_SLACK_WEBHOOK }}
+
+      - name: Save CVE state
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: state.json
+          key: stackwatch-state-${{ runner.os }}-${{ github.run_id }}

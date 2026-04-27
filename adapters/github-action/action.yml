@@ -1,0 +1,32 @@
+name: "StackWatch CVE Monitor"
+description: "Watch your stack for new CVEs and post alerts to Slack"
+author: "yourorg"
+
+branding:
+  icon: "shield"
+  color: "red"
+
+inputs:
+  config:
+    description: "Path to stack.yml relative to repo root"
+    required: false
+    default: "stack.yml"
+  state-path:
+    description: "Path to state.json"
+    required: false
+    default: "${{ github.workspace }}/state.json"
+  slack-webhook-url:
+    description: "Slack Incoming Webhook URL"
+    required: true
+
+runs:
+  using: "docker"
+  image: "docker://ghcr.io/yourorg/stackwatch:latest"
+  args:
+    - run
+    - "--config"
+    - "${{ inputs.config }}"
+    - "--state-path"
+    - "${{ inputs.state-path }}"
+  env:
+    STACKWATCH_SLACK_WEBHOOK: "${{ inputs.slack-webhook-url }}"

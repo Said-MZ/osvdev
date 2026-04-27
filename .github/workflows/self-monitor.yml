@@ -1,0 +1,32 @@
+name: Self-monitor
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore state
+        uses: actions/cache@v4
+        with:
+          path: state.json
+          key: self-monitor-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: self-monitor-${{ runner.os }}-
+
+      - name: Run StackWatch on this repo's stack
+        uses: yourorg/stackwatch@v1
+        with:
+          config: examples/stack.yml
+          slack-webhook-url: ${{ secrets.STACKWATCH_SLACK_WEBHOOK }}
+
+      - name: Save state
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: state.json
+          key: self-monitor-${{ runner.os }}-${{ github.run_id }}

@@ -1,0 +1,38 @@
+# StackWatch configuration — edit this file to list your stack.
+# Docs: https://github.com/yourorg/stackwatch
+
+# Where to persist seen CVE IDs between runs.
+# For GitHub Actions use the workspace path (or actions/cache).
+state_path: ./state.json
+
+notifications:
+  slack:
+    # Set STACKWATCH_SLACK_WEBHOOK env var instead of hardcoding here.
+    webhook_url: "${STACKWATCH_SLACK_WEBHOOK}"
+
+packages:
+  # critical tier: @here mention in Slack
+  - name: rails
+    ecosystem: RubyGems
+    tier: critical
+
+  - name: django
+    ecosystem: PyPI
+    tier: critical
+
+  - name: openssh
+    ecosystem: Debian
+    tier: critical
+
+  # standard tier: silent post
+  - name: next
+    ecosystem: npm
+    tier: standard
+
+  - name: lodash
+    ecosystem: npm
+    tier: standard
+
+  - name: vim
+    ecosystem: Debian
+    tier: standard

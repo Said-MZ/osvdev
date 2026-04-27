@@ -1,0 +1,12 @@
+# StackWatch — run every weekday at 9am
+# Edit STACKWATCH_DIR and STACKWATCH_SLACK_WEBHOOK to match your setup.
+#
+# Usage: crontab -e, then paste this block.
+
+STACKWATCH_SLACK_WEBHOOK=https://hooks.slack.com/services/YOUR/WEBHOOK/URL
+
+0 9 * * 1-5 docker run --rm \
+  -v /opt/stackwatch/data:/data \
+  -v /opt/stackwatch/stack.yml:/app/stack.yml:ro \
+  -e STACKWATCH_SLACK_WEBHOOK=$STACKWATCH_SLACK_WEBHOOK \
+  ghcr.io/yourorg/stackwatch:latest run
