@@ -19,11 +19,11 @@ class TestOSV < Minitest::Test
 
     assert_equal 1, res[p].size
     v = res[p][0]
-    assert_equal "CVE-2024-27351", v["id"]
-    assert_equal "7.5",            v["cvss_score"]
-    assert_equal "3.2.25",         v["fixed"]
-    assert_equal ">=3.2.0",        v["affected"]
-    assert_match "osv.dev",        v["url"]
+    assert_equal "CVE-2024-27351", v.id
+    assert_equal "7.5",            v.cvss_score
+    assert_equal "3.2.25",         v.fixed
+    assert_equal ">=3.2.0",        v.affected
+    assert_match "osv.dev",        v.url
   end
 
   def test_fetch_all_multiple_packages
@@ -85,7 +85,7 @@ class TestOSV < Minitest::Test
     stub_osv(body: body)
     p   = pkg
     res = StackWatch::Sources::OSV.new([p]).fetch_all
-    assert_equal "9.8", res[p][0]["cvss_score"]
+    assert_equal "9.8", res[p][0].cvss_score
   end
 
   def test_cvss_falls_back_to_na
@@ -95,7 +95,7 @@ class TestOSV < Minitest::Test
     stub_osv(body: body)
     p   = pkg
     res = StackWatch::Sources::OSV.new([p]).fetch_all
-    assert_equal "N/A", res[p][0]["cvss_score"]
+    assert_equal "N/A", res[p][0].cvss_score
   end
 
   def test_no_fixed_version_returns_nil
@@ -108,6 +108,6 @@ class TestOSV < Minitest::Test
     stub_osv(body: body)
     p   = pkg
     res = StackWatch::Sources::OSV.new([p]).fetch_all
-    assert_nil res[p][0]["fixed"]
+    assert_nil res[p][0].fixed
   end
 end

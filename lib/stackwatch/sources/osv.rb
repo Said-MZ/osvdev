@@ -48,38 +48,8 @@ module StackWatch
         results = body.fetch("results", [])
         @packages.zip(results).each_with_object({}) do |(pkg, result), map|
           vulns = result&.fetch("vulns", []) || []
-          map[pkg] = vulns.map { |v| normalize(v) }
+          map[pkg] = vulns.map { |v| Vuln.from_osv(v) }
         end
-      end
-
-      def normalize(raw)
-        {
-          "id"         => raw["id"],
-          "summary"    => (raw["summary"] || raw["details"].to_s.slice(0, 200)).to_s.strip,
-          "cvss_score" => extract_cvss(raw),
-          "affected"   => extract_affected(raw),
-          "fixed"      => extract_fixed(raw),
-          "url"        => "https://osv.dev/vulnerability/#{raw["id"]}"
-        }
-      end
-
-      def extract_cvss(raw)
-        raw.dig("severity")
-           &.find { |s| s["type"] == "CVSS_V3" }
-           &.dig("score") ||
-          raw.dig("database_specific", "cvss", "score") ||
-          "N/A"
-      end
-
-      def extract_affected(raw)
-        events = raw.dig("affected", 0, "ranges", 0, "events") || []
-        introduced = events.select { |e| e["introduced"] }.map { |e| ">=#{e["introduced"]}" }
-        introduced.empty? ? "unknown" : introduced.join(", ")
-      end
-
-      def extract_fixed(raw)
-        events = raw.dig("affected", 0, "ranges", 0, "events") || []
-        events.find { |e| e["fixed"] }&.dig("fixed")
       end
     end
 

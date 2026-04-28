@@ -23,13 +23,13 @@ module StackWatch
 
     def diff(package, vulns)
       seen = Set.new(@data.dig("packages", package_key(package)) || [])
-      vulns.reject { |v| seen.include?(v["id"]) }
+      vulns.reject { |v| seen.include?(v.id) }
     end
 
     def mark_seen(package, vulns)
       key = package_key(package)
       @data["packages"][key] ||= []
-      new_ids = vulns.map { |v| v["id"] }
+      new_ids = vulns.map(&:id)
       @data["packages"][key] = (@data["packages"][key] + new_ids).uniq.sort
     end
 

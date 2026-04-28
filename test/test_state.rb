@@ -6,9 +6,9 @@ class TestState < Minitest::Test
   def setup
     @tmpdir   = Dir.mktmpdir
     @path     = File.join(@tmpdir, "state.json")
-    @pkg      = StackWatch::Package.new(name: "django", ecosystem: "PyPI", tier: "standard")
-    @vuln_a   = { "id" => "CVE-2024-001", "summary" => "A" }
-    @vuln_b   = { "id" => "CVE-2024-002", "summary" => "B" }
+    @pkg    = StackWatch::Package.new(name: "django", ecosystem: "PyPI", tier: "standard")
+    @vuln_a = stub_vuln(id: "CVE-2024-001", summary: "A")
+    @vuln_b = stub_vuln(id: "CVE-2024-002", summary: "B")
   end
 
   def teardown
@@ -32,17 +32,17 @@ class TestState < Minitest::Test
     state = StackWatch::State.load(fixture_path("state_v1.json"))
     django_pkg = StackWatch::Package.new(name: "django", ecosystem: "PyPI", tier: "critical")
     result = state.diff(django_pkg, [
-      { "id" => "CVE-2024-27351" },   # already seen
-      { "id" => "CVE-2024-99999" }    # new
+      stub_vuln(id: "CVE-2024-27351"),  # already seen
+      stub_vuln(id: "CVE-2024-99999")   # new
     ])
     assert_equal 1, result.size
-    assert_equal "CVE-2024-99999", result[0]["id"]
+    assert_equal "CVE-2024-99999", result[0].id
   end
 
   def test_diff_returns_empty_when_all_seen
     state = StackWatch::State.load(fixture_path("state_v1.json"))
     django_pkg = StackWatch::Package.new(name: "django", ecosystem: "PyPI", tier: "critical")
-    assert_equal [], state.diff(django_pkg, [{ "id" => "CVE-2024-27351" }])
+    assert_equal [], state.diff(django_pkg, [stub_vuln(id: "CVE-2024-27351")])
   end
 
   def test_mark_seen_then_diff_returns_empty

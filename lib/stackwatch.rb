@@ -18,6 +18,7 @@ module StackWatch
 
   autoload :Config,  "stackwatch/config"
   autoload :State,   "stackwatch/state"
+  autoload :Vuln,    'stackwatch/vuln'
   autoload :Runner,  "stackwatch/runner"
   autoload :CLI,     "stackwatch/cli"
 

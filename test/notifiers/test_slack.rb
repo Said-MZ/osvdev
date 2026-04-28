@@ -8,14 +8,14 @@ class TestSlack < Minitest::Test
   end
 
   def vuln(fixed: "4.2.1")
-    {
-      "id"         => "CVE-2024-12345",
-      "cvss_score" => "9.8",
-      "summary"    => "Remote code execution in Django",
-      "affected"   => ">=3.0.0",
-      "fixed"      => fixed,
-      "url"        => "https://osv.dev/vulnerability/CVE-2024-12345"
-    }
+    StackWatch::Vuln.new(
+      id:         "CVE-2024-12345",
+      cvss_score: "9.8",
+      summary:    "Remote code execution in Django",
+      affected:   ">=3.0.0",
+      fixed:      fixed,
+      url:        "https://osv.dev/vulnerability/CVE-2024-12345"
+    )
   end
 
   def stub_slack(status: 200)

@@ -65,7 +65,7 @@ class TestRunner < Minitest::Test
   def test_skips_already_seen_vulns
     # Pre-populate state with the vuln
     state = StackWatch::State.load(@state_path)
-    state.mark_seen(@pkg, [{ "id" => "CVE-2024-99999" }])
+    state.mark_seen(@pkg, [stub_vuln(id: "CVE-2024-99999")])
     state.persist
 
     stub_osv

@@ -19,14 +19,14 @@ module StackWatch
 
       def format_message(package:, vuln:)
         mention   = package.critical? ? "<!here> " : ""
-        fixed_str = vuln["fixed"] || "no patch"
+        fixed_str = vuln.fixed || "no patch"
 
         [
           "#{mention}:rotating_light: New CVE for *#{package.name}* (#{package.ecosystem})",
-          "*#{vuln["id"]}* — CVSS #{vuln["cvss_score"]}",
-          vuln["summary"],
-          "Affected: #{vuln["affected"]}   Patched: #{fixed_str}",
-          "<#{vuln["url"]}|View on osv.dev>"
+          "*#{vuln.id}* — CVSS #{vuln.cvss_score}",
+          vuln.summary,
+          "Affected: #{vuln.affected}   Patched: #{fixed_str}",
+          "<#{vuln.url}|View on osv.dev>"
         ].join("\n")
       end
 
